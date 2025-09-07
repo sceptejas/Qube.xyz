@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTC Lending Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/reset.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .header p {
+            margin: 8px 0 0 0;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 24px;
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 16px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 8px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .balance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .balance-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .balance-label {
+            font-weight: 500;
+            color: #666;
+        }
+
+        .balance-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #1890ff;
+            box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+        }
+
+        .btn {
+            background: #1890ff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background: #40a9ff;
+        }
+
+        .btn:disabled {
+            background: #d9d9d9;
+            cursor: not-allowed;
+        }
+
+        .btn-danger {
+            background: #ff4d4f;
+        }
+
+        .btn-danger:hover {
+            background: #ff7875;
+        }
+
+        .btn-success {
+            background: #52c41a;
+        }
+
+        .btn-success:hover {
+            background: #73d13d;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-connected {
+            background-color: #52c41a;
+        }
+
+        .status-disconnected {
+            background-color: #ff4d4f;
+        }
+
+        .contract-info {
+            background: #f0f2f5;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 16px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+
+        .contract-address {
+            color: #1890ff;
+            cursor: pointer;
+        }
+
+        .contract-address:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+
+        .alert-info {
+            background: #e6f7ff;
+            border: 1px solid #91d5ff;
+            color: #0050b3;
+        }
+
+        .alert-warning {
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+            color: #ad6800;
+        }
+
+        .alert-error {
+            background: #fff2f0;
+            border: 1px solid #ffccc7;
+            color: #a8071a;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏦 BTC Lending Platform</h1>
+            <p>Simple and Secure Bitcoin Lending on Aptos</p>
+        </div>
+
+        <div class="content">
+            <!-- Wallet Connection -->
+            <div class="section">
+                <h2>🔗 Wallet Connection</h2>
+                <div id="wallet-section">
+                    <div id="wallet-disconnected" class="card">
+                        <div style="text-align: center;">
+                            <span class="status-indicator status-disconnected"></span>
+                            <span>Wallet Not Connected</span>
+                        </div>
+                        <div style="text-align: center; margin-top: 16px;">
+                            <button class="btn" onclick="connectWallet()">Connect Wallet</button>
+                        </div>
+                    </div>
+                    <div id="wallet-connected" class="card hidden">
+                        <div>
+                            <span class="status-indicator status-connected"></span>
+                            <span><strong>Wallet Connected</strong></span>
+                        </div>
+                        <div style="margin-top: 8px;">
+                            <span id="wallet-address" style="font-family: monospace; color: #666;"></span>
+                        </div>
+                        <div style="margin-top: 16px;">
+                            <button class="btn btn-danger" onclick="disconnectWallet()">Disconnect</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contract Addresses -->
+            <div class="section">
+                <h2>📍 Contract Addresses</h2>
+                <div class="contract-info">
+                    <div><strong>Interest Rate Model:</strong> <span class="contract-address" id="interest-rate-model">YOUR_WALLET_ADDRESS::interest_rate_model</span></div>
+                    <div><strong>Collateral Vault:</strong> <span class="contract-address" id="collateral-vault">YOUR_WALLET_ADDRESS::collateral_vault</span></div>
+                    <div><strong>Loan Manager:</strong> <span class="contract-address" id="loan-manager">YOUR_WALLET_ADDRESS::loan_manager</span></div>
+                    <div><strong>ctrlBTC Token:</strong> <span class="contract-address" id="ctrl-btc-token">YOUR_WALLET_ADDRESS::ctrl_btc_token</span></div>
+                    <div><strong>lnBTC Token:</strong> <span class="contract-address" id="lnbtc-token">YOUR_WALLET_ADDRESS::ln_btc_token</span></div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="grid">
+                <!-- Balances -->
+                <div class="section">
+                    <h2>💰 Your Balances</h2>
+                    <div id="balances-section">
+                        <div class="card">
+                            <div class="balance-item">
+                                <span class="balance-label">Total Collateral:</span>
+                                <span class="balance-value" id="total-collateral">0.00000000 BTC</span>
+                            </div>
+                            <div class="balance-item">
+                                <span class="balance-label">Available Collateral:</span>
+                                <span class="balance-value" id="available-collateral">0.00000000 BTC</span>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3>System Statistics</h3>
+                            <div class="balance-item">
+                                <span class="balance-label">Total Loans:</span>
+                                <span class="balance-value" id="total-loans">0</span>
+                            </div>
+                            <div class="balance-item">
+                                <span class="balance-label">Active Loans:</span>
+                                <span class="balance-value" id="active-loans">0</span>
+                            </div>
+                            <div class="balance-item">
+                                <span class="balance-label">Total Debt:</span>
+                                <span class="balance-value" id="total-debt">0.00 BTC</span>
+                            </div>
+                            <div class="balance-item">
+                                <span class="balance-label">Total Collateral:</span>
+                                <span class="balance-value" id="total-collateral-system">0.00 BTC</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Collateral Actions -->
+                <div class="section">
+                    <h2>🔒 Collateral Management</h2>
+                    <div class="card">
+                        <h3>Deposit BTC Collateral</h3>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 16px;">
+                            Deposit BTC to receive ctrlBTC tokens representing your collateral.
+                        </p>
+                        <div class="form-group">
+                            <label for="deposit-amount">Amount (BTC)</label>
+                            <input type="number" id="deposit-amount" step="0.00000001" min="0.00000001" placeholder="0.00000000">
+                        </div>
+                        <button class="btn btn-success" onclick="depositCollateral()">Deposit</button>
+                    </div>
+
+                    <div class="card">
+                        <h3>Withdraw BTC Collateral</h3>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 16px;">
+                            Burn ctrlBTC tokens to withdraw your BTC collateral.
+                        </p>
+                        <div class="form-group">
+                            <label for="withdraw-amount">Amount (BTC)</label>
+                            <input type="number" id="withdraw-amount" step="0.00000001" min="0.00000001" placeholder="0.00000000">
+                        </div>
+                        <button class="btn" onclick="withdrawCollateral()">Withdraw</button>
+                    </div>
+                </div>
+
+                <!-- Loan Actions -->
+                <div class="section">
+                    <h2>💳 Loan Management</h2>
+                    <div class="card">
+                        <h3>Create New Loan</h3>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 16px;">
+                            Create a loan using your collateral. Maximum LTV ratio is 60%.
+                        </p>
+                        <div class="alert alert-warning">
+                            <strong>Note:</strong> This is a demo interface. In production, loan creation would require proper authorization.
+                        </div>
+                        <div class="form-group">
+                            <label for="loan-collateral-amount">Collateral Amount (BTC)</label>
+                            <input type="number" id="loan-collateral-amount" step="0.00000001" min="0.00000001" placeholder="0.00000000">
+                        </div>
+                        <div class="form-group">
+                            <label for="ltv-ratio">LTV Ratio (%)</label>
+                            <select id="ltv-ratio">
+                                <option value="30">30% (Interest: 5%)</option>
+                                <option value="45">45% (Interest: 8%)</option>
+                                <option value="60">60% (Interest: 10%)</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-success" onclick="createLoan()">Create Loan</button>
+                    </div>
+
+                    <div class="card">
+                        <h3>Repay Loan</h3>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 16px;">
+                            Repay your existing loan. Enter the loan ID and repayment amount.
+                        </p>
+                        <div class="form-group">
+                            <label for="loan-id">Loan ID</label>
+                            <input type="number" id="loan-id" min="1" placeholder="Enter loan ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="repay-amount">Repayment Amount (BTC)</label>
+                            <input type="number" id="repay-amount" step="0.00000001" min="0.00000001" placeholder="0.00000000">
+                        </div>
+                        <button class="btn" onclick="repayLoan()">Repay Loan</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Platform Features -->
+            <div class="section">
+                <h2>✨ Platform Features</h2>
+                <div class="grid">
+                    <div style="text-align: center; padding: 16px;">
+                        <div style="font-size: 24px; margin-bottom: 8px;">🔒</div>
+                        <h3>Over-Collateralized</h3>
+                        <p style="color: #666;">Maximum 60% LTV ratio for security</p>
+                    </div>
+                    <div style="text-align: center; padding: 16px;">
+                        <div style="font-size: 24px; margin-bottom: 8px;">📊</div>
+                        <h3>Fixed Rates</h3>
+                        <p style="color: #666;">30%→5%, 45%→8%, 60%→10% interest rates</p>
+                    </div>
+                    <div style="text-align: center; padding: 16px;">
+                        <div style="font-size: 24px; margin-bottom: 8px;">⚡</div>
+                        <h3>Fast & Secure</h3>
+                        <p style="color: #666;">Built on Aptos blockchain</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="section">
+                <h2>📖 How to Use</h2>
+                <div class="grid">
+                    <div style="padding: 16px; background: #f8f9fa; border-radius: 8px;">
+                        <h3>1. Connect Wallet</h3>
+                        <p>Connect your Aptos wallet to interact with the platform</p>
+                    </div>
+                    <div style="padding: 16px; background: #f8f9fa; border-radius: 8px;">
+                        <h3>2. Deposit Collateral</h3>
+                        <p>Deposit BTC to receive ctrlBTC tokens representing your collateral</p>
+                    </div>
+                    <div style="padding: 16px; background: #f8f9fa; border-radius: 8px;">
+                        <h3>3. Create Loan</h3>
+                        <p>Use your collateral to create a loan and receive lnBTC tokens</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@aptos-labs/ts-sdk@1.0.0/dist/index.umd.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+
