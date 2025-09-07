@@ -1,252 +1,159 @@
-# Qube.xyz in collaboration with TesserApt
+# Qube.xyz a borowing aggregator protocol 
+## In Collaboration with TessrApt
 
-A decentralized lending platform built on Aptos Move that enables users to deposit BTC as collateral and borrow against it using synthetic tokens. The platform implements over-collateralized lending with fixed interest rates based on loan-to-value (LTV) ratios.
+This project implements a modern DeFi trading interface for executing the Buy Borrow Die (BBD) strategy using xBTC tokens on the Aptos blockchain.
 
-## 🏗️ Architecture
+The interface integrates seamlessly with the Petra wallet and provides a professional dashboard for staking, borrowing, repaying, and tracking portfolio performance.
 
-The platform consists of five core modules:
+The strategy assumes a 46% annual appreciation of xBTC, allowing users to borrow 30% Loan-to-Value (LTV) at a low 2% annual interest rate, with refinancing opportunities each year.
 
-1. **ctrlBTC Token**: ERC-20 compliant token representing BTC deposited as collateral
-2. **lnBTC Token**: ERC-20 compliant token representing loan BTC issued to borrowers  
-3. **CollateralVault**: Secure storage and management of user collateral
-4. **LoanManager**: Core business logic for complete loan lifecycle management
-5. **InterestRateModel**: Interest rate calculation based on LTV ratios
+🧩 Core Concept
 
-## ✨ Features
+Stake xBTC to lock assets on Aptos.
 
-- **Over-collateralized lending** (up to 60% LTV)
-- **Fixed interest rates** based on loan-to-value ratios
-- **Secure collateral management** with atomic operations
-- **Modular architecture** for maintainability and upgrades
-- **Comprehensive event system** for tracking all operations
-- **Admin controls** for emergency situations and system management
-- **Full test coverage** including integration tests
+Borrow against appreciating xBTC collateral (up to 30% LTV).
 
-## 💰 Interest Rate Structure
+Accrue Interest at 2% APR on borrowed assets.
 
-| LTV Ratio | Interest Rate | Use Case |
-|-----------|---------------|----------|
-| 30%       | 5%           | Conservative borrowing |
-| 45%       | 8%           | Moderate borrowing |
-| 60%       | 10%          | Maximum borrowing |
+Refinance Annually based on asset growth (assumed +46% per year).
 
-## 🔄 Core Workflow
+Repeat to maximize capital efficiency while maintaining exposure to xBTC.
 
-### 1. Deposit Collateral
-```move
-// User deposits 1 BTC as collateral
-collateral_vault::deposit_collateral(user, 100000000); // 1 BTC in satoshis
-// This mints 1 ctrlBTC token to the user
-```
+⚙️ Technical Architecture
+System Layers
 
-### 2. Create Loan
-```move
-// User creates a loan with 30% LTV against their collateral
-loan_manager::create_loan(user, 100000000, 30); // 1 BTC collateral, 30% LTV
-// This locks the collateral and mints 0.3 lnBTC to the user
-```
+User Layer
 
-### 3. Repay Loan
-```move
-// User repays the loan (partial or full)
-loan_manager::repay_loan(user, loan_id, repayment_amount);
-// This burns lnBTC tokens and unlocks collateral proportionally
-```
+End users interact with the dApp through a modern DeFi dashboard.
 
-### 4. Withdraw Collateral
-```move
-// User withdraws their unlocked collateral
-collateral_vault::withdraw_collateral(user, amount);
-// This burns ctrlBTC tokens and releases the underlying BTC
-```
+Wallet Layer
 
-## 🚀 Development
+Petra Wallet for authentication, signing, and transaction broadcasting.
 
-### Prerequisites
+UI Layer (Frontend)
 
-- Aptos CLI installed and configured
-- Move development environment set up
-- Testnet account with APT tokens for deployment
+Built using React + TypeScript with modern hooks, context, and responsive glassmorphism design.
 
-### Building
+Smart Contract Layer
 
-```bash
-# Compile all modules
-aptos move compile
+Interacts with xBTC token and borrowing contracts deployed on Aptos.
 
-# Compile with specific address
-aptos move compile --named-addresses btc_lending_platform=0x123...
-```
+xBTC Token Address:
 
-### Testing
+0x5e25225f13c79a741fa58f8db5c6c8aa4da5f5113553592c797a8d1588ddf01b
 
-```bash
-# Run all tests
-aptos move test
 
-# Run specific test module
-aptos move test --filter integration_tests
+Blockchain Layer
 
-# Run with verbose output
-aptos move test --verbose
-```
+All transactions and state updates occur on Aptos Blockchain.
 
-### Deployment
+Architecture Diagram
 
-```bash
-# Deploy to testnet
-aptos move publish --profile testnet
+Flow Explanation:
 
-# Deploy with custom profile
-aptos move publish --profile mainnet
-```
+User ↔ Petra Wallet → Handles wallet connection, signing, and account management.
 
-## 📊 System Statistics
+Petra Wallet ↔ dApp UI → The wallet injects account info, balance, and tx state into the UI.
 
-The platform tracks comprehensive statistics:
+dApp UI ↔ Smart Contracts → Executes stake, borrow, repay, and refinance functions.
 
-- **Total Active Loans**: Number of currently active loans
-- **Total Outstanding Debt**: Sum of all outstanding loan principals
-- **Total Loans Created**: Historical count of all loans created
-- **Total Vault Collateral**: Total collateral deposited across all users
+Smart Contracts ↔ Aptos Blockchain → On-chain execution, validation, and state storage.
 
-## 🔒 Security Features
+🖥️ User Interface
+Dashboard Sections
 
-### Access Controls
-- **ctrlBTC**: Only CollateralVault can mint/burn
-- **lnBTC**: Only LoanManager can mint/burn  
-- **CollateralVault**: Only LoanManager can lock/unlock collateral
-- **InterestRateModel**: Only admin can update rates
-- **All contracts**: Admin-only emergency controls
+Header
 
-### Over-Collateralization
-- Maximum LTV: 60%
-- Ensures system remains solvent
-- Provides buffer against price volatility
-- Prevents under-collateralized positions
+App title: xBTC Buy Borrow Die Strategy
 
-### Emergency Controls
-- **Pause/Unpause**: Admin can pause system operations
-- **Admin Transfer**: Secure admin privilege transfer
-- **Contract Updates**: Admin can update contract addresses
-- **Emergency Loan Closure**: Admin can close loans in emergencies
+Petra wallet connect/disconnect button
 
-## 🧪 Testing
+Connected address & xBTC balance
 
-The platform includes comprehensive test coverage:
+Strategy Overview Card
 
-### Unit Tests
-- Individual contract function testing
-- Access control verification
-- Error condition testing
-- Edge case validation
+Key metrics displayed:
 
-### Integration Tests
-- End-to-end loan workflows
-- Cross-contract interactions
-- Multiple user scenarios
-- System statistics tracking
-- Error condition handling
+Annual Appreciation: 46%
 
-### Test Coverage
-- ✅ Token operations (mint, burn, transfer)
-- ✅ Collateral management (deposit, withdraw, lock, unlock)
-- ✅ Loan lifecycle (create, repay, close)
-- ✅ Interest calculations
-- ✅ System statistics
-- ✅ Admin functions
-- ✅ Error conditions
+Max Borrowing Power: 30% LTV
 
-## 📈 Usage Examples
+Interest Rate: 2% APR
 
-### Basic Loan Flow
-```move
-// 1. Deposit 1 BTC collateral
-collateral_vault::deposit_collateral(user, 100000000);
+Flowchart of yearly cycle (Stake → Borrow → Growth → Refinance).
 
-// 2. Create 30% LTV loan (0.3 BTC loan)
-loan_manager::create_loan(user, 100000000, 30);
+Position Management Tabs
 
-// 3. Use the loan tokens (transfer, trade, etc.)
-ln_btc_token::transfer(user, recipient, 15000000); // 0.15 BTC
+Stake Tab → Stake xBTC, view staked amount, see borrowing power.
 
-// 4. Repay loan with interest
-let (_, _, _, outstanding, _, _, interest_owed, _) = loan_manager::get_loan(1);
-loan_manager::repay_loan(user, 1, outstanding + interest_owed);
+Borrow Tab → Borrow against staked xBTC, view interest, confirm borrow.
 
-// 5. Withdraw remaining collateral
-collateral_vault::withdraw_collateral(user, 100000000);
-```
+Repay Tab → Repay loan (interest only / full repayment).
 
-### Multiple Loans
-```move
-// User can have multiple active loans
-loan_manager::create_loan(user, 100000000, 30); // 0.3 BTC loan
-loan_manager::create_loan(user, 50000000, 45);  // 0.225 BTC loan
+Portfolio Overview
 
-// Check all user loans
-let user_loans = loan_manager::get_borrower_loans(user_address);
-```
+Current staked amount
 
-### Admin Operations
-```move
-// Update interest rates
-interest_rate_model::set_rate(admin, 40, 650); // 40% LTV -> 6.5% rate
+Borrowed amount
 
-// Pause system in emergency
-loan_manager::pause_system(admin);
+Accrued interest
 
-// Transfer admin privileges
-loan_manager::transfer_admin(admin, new_admin_address);
-```
+Net portfolio value
 
-## 🔧 Configuration
+Time to next refinancing
 
-### Environment Variables
-```bash
-# For deployment
-export APTOS_PROFILE=testnet
-export APTOS_NETWORK=testnet
-```
+Analytics Section
 
-### Contract deployment data Addresses
-Wallet Address: 0x5e25225f13c79a741fa58f8db5c6c8aa4da5f5113553592c797a8d1588ddf01b
-Contract Addresses:
-InterestRateModel: 0x5e25225f13c79a741fa58f8db5c6c8aa4da5f5113553592c797a8d1588ddf01b::interest_rate_model
-CollateralVault: 0x5e25225f13c79a741fa58f8db5c6c8aa4da5f5113553592c797a8d1588ddf01b::collateral_vault
-LoanManager: 0x5e25225f13c79a741fa58f8db5c6c8aa4da5f5113553592c797a8d1588ddf01b::loan_manager
-ctrlBTC Token: 0x5e25225f13c79a741fa58f8db5c6c8aa4da5f5113553592c797a8d1588ddf01b::ctrl_btc_token
-lnBTC Token: 0x5e25225f13c79a741fa58f8db5c6c8aa4da5f5113553592c797a8d1588ddf01b::ln_btc_token
-xBTC Token Details:
-Contract Address: 0x5e25225f13c79a741fa58f8db5c6c8aa4da5f5113553592c797a8d1588ddf01b::xbtc_token
+Projected asset growth (46% yearly)
 
-## 📝 Events
+Interest accumulation curve
 
-The platform emits comprehensive events for all operations:
+Net worth progression
 
-- **DepositEvent**: When users deposit collateral
-- **WithdrawalEvent**: When users withdraw collateral
-- **LoanCreatedEvent**: When new loans are created
-- **LoanRepaidEvent**: When loans are repaid
-- **CollateralLockedEvent**: When collateral is locked for loans
-- **CollateralUnlockedEvent**: When collateral is unlocked
-- **LoanStateChangedEvent**: When loan states change
+🔑 Wallet Functions
+// Petra Wallet Integration Functions
+connectWallet()
+getWalletBalance()
+stakeXBTC(amount: number)
+borrowAgainstStake(amount: number)
+repayLoan(amount: number)
+getStakedAmount()
+getBorrowedAmount()
+getInterestOwed()
 
-## 🤝 Contributing
+📊 Sample Data (Demo Mode)
+Metric	Value
+Staked Amount	1.5 xBTC
+Borrowed Amount	0.45 xBTC (30% LTV)
+Accrued Interest	0.009 xBTC (2%)
+Projected Value (1 yr)	2.19 xBTC (46%)
+Available to Reborrow	0.657 xBTC
+⚠️ Risk Management
 
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new functionality
-4. Ensure all tests pass
-5. Submit a pull request
+Leveraged positions carry liquidation risk.
 
-## 📄 License
+Past performance ≠ future returns.
 
-MIT License - see LICENSE file for details
+Clear disclosures and disclaimers included in the UI.
 
-## 🆘 Support
+Educational tooltips explain staking, borrowing, and refinancing risks.
 
-For questions, issues, or contributions:
-- Create an issue on GitHub
-- Review the test files for usage examples
-- Check the integration tests for complete workflows
+🎨 Design Style
+
+Dark theme with neon green/blue accents
+
+Glassmorphism UI components
+
+Smooth transitions and responsive design
+
+Professional trading interface aesthetic
+
+🚀 Future Enhancements
+
+Multi-wallet support (Martian, Pontem)
+
+Advanced analytics (PnL, risk simulation)
+
+DAO governance layer for protocol parameters
+
+Mobile app deployment
