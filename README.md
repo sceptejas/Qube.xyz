@@ -1,5 +1,5 @@
 # Qube.xyz a borowing aggregator protocol 
-## In Collaboration with TessrApt
+## In Collaboration with TesserApt
 
 This project implements a modern DeFi trading interface for executing the Buy Borrow Die (BBD) strategy using xBTC tokens on the Aptos blockchain.
 
