@@ -1,4 +1,4 @@
-# BTC Lending Platform
+# Qube.xyz in collaboration with TesserApt
 
 A decentralized lending platform built on Aptos Move that enables users to deposit BTC as collateral and borrow against it using synthetic tokens. The platform implements over-collateralized lending with fixed interest rates based on loan-to-value (LTV) ratios.
 
@@ -209,13 +209,16 @@ export APTOS_PROFILE=testnet
 export APTOS_NETWORK=testnet
 ```
 
-### Contract Addresses
-After deployment, update your frontend/scripts with the deployed contract addresses:
-- InterestRateModel
-- CollateralVault  
-- LoanManager
-- ctrlBTC Token
-- lnBTC Token
+### Contract deployment data Addresses
+Wallet Address: 0x5e25225f13c79a741fa58f8db5c6c8aa4da5f5113553592c797a8d1588ddf01b
+Contract Addresses:
+InterestRateModel: 0x5e25225f13c79a741fa58f8db5c6c8aa4da5f5113553592c797a8d1588ddf01b::interest_rate_model
+CollateralVault: 0x5e25225f13c79a741fa58f8db5c6c8aa4da5f5113553592c797a8d1588ddf01b::collateral_vault
+LoanManager: 0x5e25225f13c79a741fa58f8db5c6c8aa4da5f5113553592c797a8d1588ddf01b::loan_manager
+ctrlBTC Token: 0x5e25225f13c79a741fa58f8db5c6c8aa4da5f5113553592c797a8d1588ddf01b::ctrl_btc_token
+lnBTC Token: 0x5e25225f13c79a741fa58f8db5c6c8aa4da5f5113553592c797a8d1588ddf01b::ln_btc_token
+xBTC Token Details:
+Contract Address: 0x5e25225f13c79a741fa58f8db5c6c8aa4da5f5113553592c797a8d1588ddf01b::xbtc_token
 
 ## 📝 Events
 
